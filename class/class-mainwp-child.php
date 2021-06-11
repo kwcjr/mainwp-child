@@ -365,6 +365,7 @@ class MainWP_Child {
 	 * @uses \MainWP\Child\MainWP_Child_Pagespeed::init()
 	 * @uses \MainWP\Child\MainWP_Child_Links_Checker::init()
 	 * @uses \MainWP\Child\MainWP_Child_WPvivid_BackupRestore::init()
+     * @uses \MainWP\Child\MainWP_Child_Cache_Purge::init()
 	 */
 	private function parse_init_extensions() {
 		MainWP_Child_Branding::instance()->branding_init();
@@ -381,6 +382,7 @@ class MainWP_Child {
 		MainWP_Child_Pagespeed::instance()->init();
 		MainWP_Child_Links_Checker::instance()->init();
 		MainWP_Child_WPvivid_BackupRestore::instance()->init();
+		MainWP_Child_Cache_Purge::instance()->init();
 	}
 
 	/**

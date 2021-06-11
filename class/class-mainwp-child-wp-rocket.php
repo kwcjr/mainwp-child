@@ -19,6 +19,7 @@
 namespace MainWP\Child;
 
 // phpcs:disable PSR1.Classes.ClassDeclaration, WordPress.WP.AlternativeFunctions -- required to achieve desired results, pull request solutions appreciated.
+use Exception;
 
 /**
  * Class MainWP_Child_WP_Rocket
@@ -75,6 +76,7 @@ class MainWP_Child_WP_Rocket {
 	 * @return void
 	 */
 	public function init() {
+
 		if ( ! $this->is_plugin_installed ) {
 			return;
 		}
@@ -89,6 +91,17 @@ class MainWP_Child_WP_Rocket {
 			add_action( 'wp_before_admin_bar_render', array( $this, 'wp_before_admin_bar_render' ), 99 );
 			add_action( 'admin_init', array( $this, 'remove_notices' ) );
 		}
+
+        /**
+         * WP CLI interface for WP Rocket.
+         *
+         * Gives access to a set of `wp rocket` commands.
+         *
+         * Plugin-URI: https://github.com/wp-media/wp-rocket-cli
+         * Author: WP Media
+         * Author URI: http://wp-media.me
+         */
+        require( MAINWP_CHILD_PLUGIN_DIR . 'bin/wp-rocket-cli/wp-rocket-cli.php' );
 	}
 
 	/**
@@ -197,7 +210,7 @@ class MainWP_Child_WP_Rocket {
 			try {
 				$data                            = array( 'rocket_boxes' => get_user_meta( $GLOBALS['current_user']->ID, 'rocket_boxes', true ) );
 				$information['syncWPRocketData'] = $data;
-			} catch ( \Exception $e ) {
+			} catch ( Exception $e ) {
 				// ok!
 			}
 		}
@@ -471,7 +484,7 @@ class MainWP_Child_WP_Rocket {
 						$information = $this->do_admin_post_rocket_purge_opcache();
 						break;
 				}
-			} catch ( \Exception $e ) {
+			} catch ( Exception $e ) {
 				$information = array( 'error' => $e->getMessage() );
 			}
 		}
@@ -571,7 +584,7 @@ class MainWP_Child_WP_Rocket {
 	 * Preload cache.
 	 *
 	 * @return array Action result.
-	 * @throws \Exception Error message.
+	 * @throws Exception Error message.
 	 *
 	 * @used-by \MainWP\Child\MainWP_Child_WP_Rocket::actions() Fire off certain WP Rocket plugin actions.
 	 * @uses    \MainWP\Child\MainWP_Helper::instance()->check_methods()
@@ -600,7 +613,7 @@ class MainWP_Child_WP_Rocket {
 	 * Generate critical CSS.
 	 *
 	 * @return array Action result.
-	 * @throws \Exception Error message.
+	 * @throws Exception Error message.
 	 *
 	 * @used-by \MainWP\Child\MainWP_Child_WP_Rocket::actions() Fire off certain WP Rocket plugin actions.
 	 * @uses    \MainWP\Child\MainWP_Helper::instance()->check_properties()
@@ -660,15 +673,16 @@ class MainWP_Child_WP_Rocket {
 		return array( 'result' => 'SUCCESS' );
 	}
 
-	/**
-	 * Method save_settings()
-	 *
-	 * Save the plugin settings.
-	 *
-	 * @used-by MainWP_Child_WP_Rocket::actions() Fire off certain WP Rocket plugin actions.
-	 *
-	 * @return array Action result.
-	 */
+    /**
+     * Method save_settings()
+     *
+     * Save the plugin settings.
+     *
+     * @used-by MainWP_Child_WP_Rocket::actions() Fire off certain WP Rocket plugin actions.
+     *
+     * @return array Action result.
+     * @throws Exception
+     */
 	public function save_settings() {
 		$options = isset( $_POST['settings'] ) ? maybe_unserialize( base64_decode( wp_unslash( $_POST['settings'] ) ) ) : ''; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions -- base64_encode function is used for http encode compatible..
 		if ( ! is_array( $options ) || empty( $options ) ) {
@@ -699,7 +713,7 @@ class MainWP_Child_WP_Rocket {
 	 * Optimize database tables.
 	 *
 	 * @return array Action result
-	 * @throws \Exception Error message.
+	 * @throws Exception Error message.
 	 *
 	 * @used-by \MainWP\Child\MainWP_Child_WP_Rocket::actions() Fire off certain WP Rocket plugin actions.
 	 * @uses    \MainWP\Child\MainWP_Helper::instance()->check_methods()
@@ -739,7 +753,7 @@ class MainWP_Child_WP_Rocket {
 	 * Get the optimization information.
 	 *
 	 * @return array Action result and optimization information.
-	 * @throws \Exception Error message.
+	 * @throws Exception Error message.
 	 *
 	 * @used-by \MainWP\Child\MainWP_Child_WP_Rocket::actions() Fire off certain WP Rocket plugin actions.
 	 * @uses    \MainWP\Child\MainWP_Helper::instance()->check_classes_exists()

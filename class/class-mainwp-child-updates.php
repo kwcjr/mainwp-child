@@ -111,6 +111,7 @@ class MainWP_Child_Updates {
 	 * @uses \MainWP\Child\MainWP_Helper::write()
 	 */
 	public function upgrade_plugin_theme() {
+
 		// Prevent disable/re-enable at upgrade.
 		if ( ! defined( 'DOING_CRON' ) ) {
 
@@ -145,6 +146,15 @@ class MainWP_Child_Updates {
 			$this->update_premiums_todo( $information, $premiumUpgrader, $mwp_premium_updates_todo, $mwp_premium_updates_todo_slugs );
 		}
 
+        /**
+         * WP-Rocket auto cache purge.
+         *
+         * Purge cache after updates.
+         * @params $information.
+         */
+         MainWP_Child_Cache_Purge::instance()->wprocket_auto_cache_purge($information);
+
+		// Save Status results.
 		$information['sync'] = MainWP_Child_Stats::get_instance()->get_site_stats( array(), false );
 		MainWP_Helper::write( $information );
 	}
@@ -253,6 +263,7 @@ class MainWP_Child_Updates {
 		if ( null !== $this->filterFunction ) {
 			remove_filter( 'pre_site_transient_update_plugins', $this->filterFunction, 99 );
 		}
+
 	}
 
 	/**
@@ -984,5 +995,4 @@ class MainWP_Child_Updates {
 		$information['sync'] = MainWP_Child_Stats::get_instance()->get_site_stats( array(), false );
 		MainWP_Helper::write( $information );
 	}
-
 }
